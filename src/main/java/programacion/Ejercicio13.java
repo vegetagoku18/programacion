@@ -1,0 +1,68 @@
+package programacion;
+
+import javax.swing.JFrame;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+
+public class Ejercicio13 extends JFrame implements ActionListener {
+    JTextField txfRed;
+    JTextField txfGreen;
+    JTextField txfBlue;
+    JButton btnColor;
+
+    public Ejercicio13() {
+        super("Ejercicio 13");
+        this.setLayout(new FlowLayout());
+        JLabel lblInfo = new JLabel("Valores RGB entre 0 y 255");
+        lblInfo.setBounds(0, 0, 150, 50);
+        // Rojo
+        txfRed = new JTextField();
+        txfRed.setBounds(75, 50, 100, 40);
+        JLabel lblRed = new JLabel("Valor Rojo:");
+        lblRed.setBounds(0, 50, 100, 50);
+        // Verde
+        txfGreen = new JTextField();
+        txfGreen.setBounds(75, 100, 100, 40);
+        JLabel lblGreen = new JLabel("Valor Verde:");
+        lblGreen.setBounds(0, 100, 100, 50);
+        // Azul
+        txfBlue = new JTextField();
+        txfBlue.setBounds(75, 150, 100, 40);
+        JLabel lblBlue = new JLabel("Valor Azul:");
+        lblBlue.setBounds(0, 150, 100, 50);
+
+        btnColor = new JButton("Cambiar color boton");
+        btnColor.setBounds(200, 100, 150, 40);
+        btnColor.addActionListener(this);
+
+        this.add(lblInfo);
+        this.add(btnColor);
+        this.add(txfRed);
+        this.add(lblRed);
+        this.add(txfGreen);
+        this.add(lblGreen);
+        this.add(txfBlue);
+        this.add(lblBlue);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        try {
+            if (Integer.parseInt(txfRed.getText()) < 0 || Integer.parseInt(txfRed.getText()) > 255
+                    || Integer.parseInt(txfBlue.getText()) < 0 || Integer.parseInt(txfBlue.getText()) > 255
+                    || Integer.parseInt(txfGreen.getText()) < 0 || Integer.parseInt(txfGreen.getText()) > 255) {
+                        throw new NumberFormatException();
+            }
+            if ((e.getModifiers()&InputEvent.CTRL_DOWN_MASK) == InputEvent.CTRL_DOWN_MASK) {
+                
+            }
+            btnColor.setBackground(new Color(Integer.parseInt(txfRed.getText()),
+                    Integer.parseInt(txfGreen.getText()), Integer.parseInt(txfBlue.getText())));
+        } catch (NullPointerException npe) {
+            this.setTitle("Algun/os parametro/s están vacíos");
+        } catch (NumberFormatException nfe) {
+            this.setTitle("Algun/os parametro/s no son válidos");
+        }
+    }
+}
