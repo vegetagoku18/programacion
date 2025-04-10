@@ -1,90 +1,116 @@
 package programacion;
 
-import javax.swing.JFrame;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
-public class Ejercicio13 extends JFrame implements ActionListener, KeyListener {
+public class Ejercicio13 extends JFrame implements ActionListener {
+    // TODO fronteras en colores
+  
+    JLabel lblInfo;
     JTextField txfRed;
+    JLabel lblRed;
     JTextField txfGreen;
+    JLabel lblGreen;
     JTextField txfBlue;
+    JLabel lblBlue;
     JButton btnColor;
+    JLabel lblImagen;
+    JTextField txfImagen;
+    JLabel lblMuestraImagen;
 
     public Ejercicio13() {
         super("Ejercicio 13");
         this.setLayout(new FlowLayout());
-        JLabel lblInfo = new JLabel("Valores RGB entre 0 y 255");
-        lblInfo.setBounds(0, 0, 150, 50);
-        // Rojo
-        JLabel lblRed = new JLabel("Valor Rojo:");
-        lblRed.setBounds(0, 50, 100, 50);
-        txfRed = new JTextField("Valor Rojo");
+        lblInfo = new JLabel("Valores RGB entre 0 y 255");
+        this.add(lblInfo);
+        this.addWindowListener(new CierreVentana());
+
+        // txfRojo
+        lblRed = new JLabel("Valor Rojo:");
+        this.add(lblRed);
+
+        txfRed = new JTextField();
         txfRed.setColumns(10);
         txfRed.setToolTipText("Color Rojo");
-        // Verde
+        this.add(txfRed);
+
+        // txfVerde
         JLabel lblGreen = new JLabel("Valor Verde:");
-        lblGreen.setBounds(0, 100, 100, 50);
-        txfGreen = new JTextField("Valor Verde");
+        this.add(lblGreen);
+
+        txfGreen = new JTextField();
         txfGreen.setColumns(10);
         txfGreen.setToolTipText("Color Verde");
-        // Azul
+        this.add(txfGreen);
+
+        // txfAzul
         JLabel lblBlue = new JLabel("Valor Azul:");
-        lblBlue.setBounds(0, 150, 100, 50);
-        txfBlue = new JTextField("Valor Azul ");
+        this.add(lblBlue);
+
+        txfBlue = new JTextField();
         txfBlue.setColumns(10);
         txfBlue.setToolTipText("Color Azul");
-        txfBlue.addKeyListener(this);
+        txfBlue.addActionListener(this);
+        this.add(txfBlue);
 
+        // Boton Color
         btnColor = new JButton("Cambiar color boton");
         btnColor.setToolTipText("Cambiar");
         btnColor.addActionListener(this);
-
-        this.add(lblInfo);
-        this.add(lblRed);
-        this.add(txfRed);
-        this.add(lblGreen);
-        this.add(txfGreen);
-        this.add(lblBlue);
-        this.add(txfBlue);
         this.add(btnColor);
+
+        // txfImagen
+        // C:\\Users\\Carlos\\Pictures\\Bocanegra.jpg
+        JLabel lblImagen = new JLabel("Ruta de la imagen");
+        this.add(lblImagen);
+
+        txfImagen = new JTextField();
+        txfImagen.setToolTipText("Ruta de la Imagen");
+        txfImagen.setColumns(20);
+        txfImagen.addActionListener(this);
+        this.add(txfImagen);
+
+        lblMuestraImagen = new JLabel();
+        this.add(lblMuestraImagen);
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         try {
-            if (Integer.parseInt(txfRed.getText()) < 0 || Integer.parseInt(txfRed.getText()) > 255
-                    || Integer.parseInt(txfBlue.getText()) < 0 || Integer.parseInt(txfBlue.getText()) > 255
-                    || Integer.parseInt(txfGreen.getText()) < 0 || Integer.parseInt(txfGreen.getText()) > 255) {
-                        throw new NumberFormatException();
+            if (Integer.parseInt(txfRed.getText().trim()) < 0 || Integer.parseInt(txfRed.getText().trim()) > 255
+                    || Integer.parseInt(txfBlue.getText().trim()) < 0 || Integer.parseInt(txfBlue.getText().trim()) > 255
+                    || Integer.parseInt(txfGreen.getText().trim()) < 0 || Integer.parseInt(txfGreen.getText().trim()) > 255) {
+                throw new NumberFormatException();
             }
-            if ((e.getModifiers()&InputEvent.CTRL_DOWN_MASK) == InputEvent.CTRL_DOWN_MASK) {
-                
-            }
-            if (e.getSource() == txfBlue) {
-                if (e.getModifiers()&) {
-                    
+            if (e.getSource() != txfImagen) {
+                if ((e.getModifiers() & ActionEvent.CTRL_MASK) == ActionEvent.CTRL_MASK) {
+                    btnColor.setForeground(new Color(Integer.parseInt(txfRed.getText()),
+                            Integer.parseInt(txfGreen.getText()), Integer.parseInt(txfBlue.getText())));
+                    System.out.println("Ctrl");
+                } else {
+                    btnColor.setBackground(new Color(Integer.parseInt(txfRed.getText()),
+                            Integer.parseInt(txfGreen.getText()), Integer.parseInt(txfBlue.getText())));
+                    System.out.println("No Ctrl");
+
                 }
+            } else {
+                lblMuestraImagen.setIcon(new ImageIcon(txfImagen.getText()));
             }
-            btnColor.setBackground(new Color(Integer.parseInt(txfRed.getText()),
-                    Integer.parseInt(txfGreen.getText()), Integer.parseInt(txfBlue.getText())));
-        } catch (NullPointerException npe) {
-            this.setTitle("Algun/os parametro/s están vacíos");
+            this.setTitle("Ejercicio 13");
         } catch (NumberFormatException nfe) {
             this.setTitle("Algun/os parametro/s no son válidos");
         }
     }
 
-    @Override
-    public void keyTyped(KeyEvent e) {
-    }
-
-    @Override
-    public void keyPressed(KeyEvent e) {
-    }
-
-    @Override
-    public void keyReleased(KeyEvent e) {
-        
+    class CierreVentana extends WindowAdapter {
+        @Override
+        public void windowClosing(WindowEvent e) {
+            int res = JOptionPane.showConfirmDialog(null, "¿Quieres salir del programa?", "Salir",
+                    JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+            if (res == JOptionPane.YES_OPTION) {
+                e.getWindow().dispose();
+            }
+        }
     }
 }
