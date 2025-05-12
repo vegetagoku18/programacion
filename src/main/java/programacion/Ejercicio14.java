@@ -3,12 +3,13 @@ package programacion;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import javax.swing.ButtonGroup;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JRadioButton;
-import javax.swing.JTextField;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Properties;
 
 public class Ejercicio14 extends JFrame implements ActionListener, ItemListener {
     JTextField txfNumeroUno;
@@ -26,6 +27,8 @@ public class Ejercicio14 extends JFrame implements ActionListener, ItemListener 
     Timer tmr;
     int contadorSegundos;
     int contadorMinutos;
+
+    private final String rutaConfig = System.getProperty("user.home") + "\\ejercicio14.properties";
 
     public Ejercicio14() {
         super("Calculadora");
@@ -46,7 +49,7 @@ public class Ejercicio14 extends JFrame implements ActionListener, ItemListener 
         add(txfNumeroDos);
 
         lblIgual = new JLabel("=");
-        lblIgual.setBounds(220, 20, 50, 20);
+        lblIgual.setBounds(220, 20, 80, 20);
         add(lblIgual);
 
         rbtSuma = new JRadioButton("+");
@@ -97,6 +100,9 @@ public class Ejercicio14 extends JFrame implements ActionListener, ItemListener 
         contadorMinutos = 0;
         tmr = new Timer(1000, this);
         tmr.start();
+
+        cargarConfiguracion();
+        addWindowListener(new CierreVentana());
     }
 
     @Override
@@ -107,20 +113,21 @@ public class Ejercicio14 extends JFrame implements ActionListener, ItemListener 
                 contadorSegundos = 0;
                 contadorMinutos++;
             }
-            this.setTitle(String.format("%2d:%2d", contadorMinutos, contadorSegundos));
+            this.setTitle(String.format("%02d:%02d", contadorMinutos, contadorSegundos));
         } else {
             try {
-
+                int decimales = Integer.parseInt(cmbDecimales.getSelectedItem().toString());
                 float resultado = 0;
                 resultado = Float.parseFloat(txfNumeroUno.getText().trim())
                         + Float.parseFloat(txfNumeroDos.getText().trim());
-                lblIgual.setText(String.format("= %f0.2", resultado));
+                lblIgual.setText(String.format("= %." + decimales + "f", resultado));
                 lblInformarError.setText("");
 
             } catch (NumberFormatException nfe) {
                 lblInformarError.setText("Debe rellenar todos los parámetros");
                 lblInformarError.setForeground(Color.RED);
             }
+            System.out.println(System.getProperty("user.home") + "\\ejercicio14.txt");
         }
     }
 
@@ -144,6 +151,45 @@ public class Ejercicio14 extends JFrame implements ActionListener, ItemListener 
             }
         }
         lblIgual.setText("=");
+    }
 
+    private void cargarConfiguracion() {
+        File archivo = new File(rutaConfig);
+        try {
+            if (!archivo.exists()) {
+                archivo.createNewFile();
+                System.out.println("Archivo de configuración creado.");
+            }
+            try (FileInputStream fis = new FileInputStream(archivo)) {
+                Properties props = new Properties();
+                props.load(fis);
+                txfNumeroUno.setText(props.getProperty("campo1", ""));
+                txfNumeroDos.setText(props.getProperty("campo2", ""));
+                cmbDecimales.setSelectedItem(props.getProperty("operacion", ""));
+                //lblIgual.setText("= %." + decimales + "f", resultado)"");
+            }
+        } catch (IOException e) {
+            System.out.println("No se pudo leer o crear el archivo de configuración.");
+            e.printStackTrace();
+        }
+    }
+
+    public void guardarConfiguracion() {
+        try (FileOutputStream fos = new FileOutputStream(rutaConfig)) {
+            Properties props = new Properties();
+            props.setProperty("campo1", txfNumeroUno.getText());
+            props.setProperty("campo2", txfNumeroDos.getText());
+            props.setProperty("operacion", cmbDecimales.getSelectedItem().toString());
+            props.store(fos, "Configuración de la última sesión");
+            System.out.println("Guardado");
+        } catch (IOException e) {
+            System.out.println("No se pudo crear");
+        }
+    }
+
+    class CierreVentana extends java.awt.event.WindowAdapter {
+        public void windowClosing(WindowEvent e) {
+            guardarConfiguracion();
+        }
     }
 }
