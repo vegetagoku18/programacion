@@ -10,6 +10,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Properties;
+import java.util.Scanner;
 
 public class Ejercicio14 extends JFrame implements ActionListener, ItemListener {
     JTextField txfNumeroUno;
@@ -37,6 +38,7 @@ public class Ejercicio14 extends JFrame implements ActionListener, ItemListener 
         txfNumeroUno = new JTextField();
         txfNumeroUno.addActionListener(this);
         txfNumeroUno.setBounds(20, 20, 80, 20);
+
         add(txfNumeroUno);
 
         lblOperacion = new JLabel("+");
@@ -45,7 +47,7 @@ public class Ejercicio14 extends JFrame implements ActionListener, ItemListener 
 
         txfNumeroDos = new JTextField();
         txfNumeroDos.setBounds(130, 20, 80, 20);
-        txfNumeroDos.addActionListener(null);
+        txfNumeroDos.addActionListener(this);
         add(txfNumeroDos);
 
         lblIgual = new JLabel("=");
@@ -85,7 +87,7 @@ public class Ejercicio14 extends JFrame implements ActionListener, ItemListener 
         add(btnCalcular);
 
         lblInformarError = new JLabel("");
-        lblInformarError.setBounds(130, 100, 250, 20);
+        lblInformarError.setBounds(130, 100, 300, 20);
         add(lblInformarError);
 
         cmbDecimales = new JComboBox<>();
@@ -118,13 +120,34 @@ public class Ejercicio14 extends JFrame implements ActionListener, ItemListener 
             try {
                 int decimales = Integer.parseInt(cmbDecimales.getSelectedItem().toString());
                 float resultado = 0;
-                resultado = Float.parseFloat(txfNumeroUno.getText().trim())
-                        + Float.parseFloat(txfNumeroDos.getText().trim());
-                lblIgual.setText(String.format("= %." + decimales + "f", resultado));
-                lblInformarError.setText("");
+                switch (lblOperacion.getText()) {
+                    case "+":
+                        resultado = Float.parseFloat(txfNumeroUno.getText().trim())// Mejor double
+                                + Float.parseFloat(txfNumeroDos.getText().trim());
+                        break;
+                    case "-":
+                        resultado = Float.parseFloat(txfNumeroUno.getText().trim())
+                                - Float.parseFloat(txfNumeroDos.getText().trim());
+                        break;
+                    case "*":
+                        resultado = Float.parseFloat(txfNumeroUno.getText().trim())
+                                * Float.parseFloat(txfNumeroDos.getText().trim());
+                        break;
+                    default:
+                        resultado = Float.parseFloat(txfNumeroUno.getText().trim())
+                                / Float.parseFloat(txfNumeroDos.getText().trim());
+                        break;
+                }
+                if (lblOperacion.getText().equals("/") && txfNumeroDos.getText().equals("0")) {
+                    lblInformarError.setForeground(Color.RED);
+                    lblInformarError.setText("No se puede dividir un número entre 0");
+                } else {
+                    lblIgual.setText(String.format("= %." + decimales + "f", resultado));
+                    lblInformarError.setText("");
+                }
 
             } catch (NumberFormatException nfe) {
-                lblInformarError.setText("Debe rellenar todos los parámetros");
+                lblInformarError.setText("Debe rellenar todos los parámetros correctamente");
                 lblInformarError.setForeground(Color.RED);
             }
             System.out.println(System.getProperty("user.home") + "\\ejercicio14.txt");
@@ -132,24 +155,8 @@ public class Ejercicio14 extends JFrame implements ActionListener, ItemListener 
     }
 
     @Override
-    public void itemStateChanged(ItemEvent e) {
-        if (e.getSource() == rbtSuma) {
-            lblOperacion.setText("+");
-        } else {
-            if (e.getSource() == rbtResta) {
-                lblOperacion.setText("-");
-            } else {
-                if (e.getSource() == rbtProducto) {
-                    lblOperacion.setText("*");
-                } else {
-                    if (e.getSource() == rbtDivision) {
-                        lblOperacion.setText("/");
-                    } else {
-
-                    }
-                }
-            }
-        }
+    public void itemStateChanged(ItemEvent e) {  
+        lblOperacion.setText(((JRadioButton) e.getSource()).getText());
         lblIgual.setText("=");
     }
 
@@ -160,14 +167,48 @@ public class Ejercicio14 extends JFrame implements ActionListener, ItemListener 
                 archivo.createNewFile();
                 System.out.println("Archivo de configuración creado.");
             }
-            try (FileInputStream fis = new FileInputStream(archivo)) {
-                Properties props = new Properties();
-                props.load(fis);
-                txfNumeroUno.setText(props.getProperty("campo1", ""));
-                txfNumeroDos.setText(props.getProperty("campo2", ""));
-                cmbDecimales.setSelectedItem(props.getProperty("operacion", ""));
-                //lblIgual.setText("= %." + decimales + "f", resultado)"");
+            try (Scanner scanner = new Scanner(archivo)) {
+                String campo1 = "";
+                String campo2 = "";
+                String operacion = "";
+                while (scanner.hasNextLine()) {
+                    String linea = scanner.nextLine();
+                    String[] partes = linea.split("=", 2);
+                    if (partes.length == 2) {
+                        String clave = partes[0].trim();
+                        String valor = partes[1].trim();
+
+                        switch (clave) {
+                            case "campo1":
+                                campo1 = valor;
+                                break;
+                            case "campo2":
+                                campo2 = valor;
+                                break;
+                            case "operacion":
+                                operacion = valor;
+                                break;
+                        }
+                    }
+                }
+                txfNumeroUno.setText(campo1);
+                txfNumeroDos.setText(campo2);
+                switch (operacion) {
+                    case "+":
+                        rbtSuma.setSelected(true);
+                        break;
+                    case "-":
+                        rbtResta.setSelected(true);
+                        break;
+                    case "*":
+                        rbtProducto.setSelected(true);
+                        break;
+                    default:
+                        rbtDivision.setSelected(true);
+                        break;
+                }
             }
+
         } catch (IOException e) {
             System.out.println("No se pudo leer o crear el archivo de configuración.");
             e.printStackTrace();
@@ -175,16 +216,29 @@ public class Ejercicio14 extends JFrame implements ActionListener, ItemListener 
     }
 
     public void guardarConfiguracion() {
-        try (FileOutputStream fos = new FileOutputStream(rutaConfig)) {
-            Properties props = new Properties();
-            props.setProperty("campo1", txfNumeroUno.getText());
-            props.setProperty("campo2", txfNumeroDos.getText());
-            props.setProperty("operacion", cmbDecimales.getSelectedItem().toString());
-            props.store(fos, "Configuración de la última sesión");
+        File archivo = new File(rutaConfig);
+        try (PrintWriter writer = new PrintWriter(archivo)) {
+            writer.println("campo1=" + txfNumeroUno.getText());
+            writer.println("campo2=" + txfNumeroDos.getText());
+            writer.println("operacion=" + operacionSeleccionada());
             System.out.println("Guardado");
         } catch (IOException e) {
-            System.out.println("No se pudo crear");
+            System.out.println("No se pudo crear el archivo de configuración.");
+            e.printStackTrace();
         }
+    }
+
+    public String operacionSeleccionada() {
+        if (rbtSuma.isSelected()) {
+            return "+";
+        }
+        if (rbtResta.isSelected()) {
+            return "-";
+        }
+        if (rbtProducto.isSelected()) {
+            return "*";
+        }
+        return "/";
     }
 
     class CierreVentana extends java.awt.event.WindowAdapter {
