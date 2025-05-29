@@ -7,11 +7,19 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+<<<<<<< HEAD
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Scanner;
+=======
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+>>>>>>> f755ca6ccbc320d060f4bac14a95199eea595a99
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -23,7 +31,10 @@ import javax.swing.JTextField;
 
 public class Ejercicio17 extends JFrame implements ActionListener, MouseListener, KeyListener {
     public String[] botonesTelefono = { "1", "2", "3", "4", "5", "6", "7", "8", "9", "#", "0", "*" };
+<<<<<<< HEAD
     // public String letras ="123456789#0*";
+=======
+>>>>>>> f755ca6ccbc320d060f4bac14a95199eea595a99
     public JButton[] btnTeclas = new JButton[botonesTelefono.length];
     boolean grabado = true;
     final String archivoDatos = "numeros.txt";
@@ -38,7 +49,10 @@ public class Ejercicio17 extends JFrame implements ActionListener, MouseListener
     JMenuItem mniReset;
     JMenuItem mniSalir;
 
+<<<<<<< HEAD
     // setMnemonic
+=======
+>>>>>>> f755ca6ccbc320d060f4bac14a95199eea595a99
     public Ejercicio17() {
         super("Telefono");
         setLayout(null);
@@ -74,12 +88,15 @@ public class Ejercicio17 extends JFrame implements ActionListener, MouseListener
         mnuPrincipal.add(mnuArchivo);
         mnuPrincipal.add(mnuMovil);
 
+<<<<<<< HEAD
         mnuArchivo.setMnemonic('a');
         mnuMovil.setMnemonic('m');
         mniGrabar.setMnemonic('g');
         mniLeer.setMnemonic('l');
         mniReset.setMnemonic('r');
         mniSalir.setMnemonic('s');
+=======
+>>>>>>> f755ca6ccbc320d060f4bac14a95199eea595a99
         setJMenuBar(mnuPrincipal);
 
         int x = 40;
@@ -90,7 +107,10 @@ public class Ejercicio17 extends JFrame implements ActionListener, MouseListener
             button.setBounds(x, y, 60, 30);
             button.addActionListener(this);
             button.addMouseListener(this);
+<<<<<<< HEAD
             button.addKeyListener(this);
+=======
+>>>>>>> f755ca6ccbc320d060f4bac14a95199eea595a99
             add(button);
             x += 80;
             if (x >= 220) {
@@ -103,7 +123,10 @@ public class Ejercicio17 extends JFrame implements ActionListener, MouseListener
         btnReset = new JButton("Reiniciar");
         btnReset.setBounds(100, 320, 100, 30);
         btnReset.addActionListener(this);
+<<<<<<< HEAD
         btnReset.addKeyListener(this);
+=======
+>>>>>>> f755ca6ccbc320d060f4bac14a95199eea595a99
         add(btnReset);
 
     }
@@ -111,12 +134,19 @@ public class Ejercicio17 extends JFrame implements ActionListener, MouseListener
     @Override
     public void actionPerformed(ActionEvent e) {
         Object src = e.getSource();
+<<<<<<< HEAD
         if (src == btnReset || src == mniReset) {
             txfNumeroTelefonico.setText("");
+=======
+
+        if (src == btnReset || src == mniReset) {
+            txfNumeroTelefonico.setText("");    
+>>>>>>> f755ca6ccbc320d060f4bac14a95199eea595a99
             grabado = true;
             for (JButton button : btnTeclas) {
                 button.setForeground(Color.BLACK);
             }
+<<<<<<< HEAD
         } else if (src instanceof JButton) {
             JButton button = (JButton) src;
             button.setForeground(Color.BLUE);
@@ -141,6 +171,31 @@ public class Ejercicio17 extends JFrame implements ActionListener, MouseListener
                 String linea;
                 while (reader.hasNextLine()) {
                     linea = reader.nextLine();
+=======
+
+        } else if (src instanceof JButton) {
+            JButton button = (JButton) src;
+            if (!button.getText().equals("Reiniciar")) { 
+                txfNumeroTelefonico.setText(txfNumeroTelefonico.getText() + button.getText());
+                grabado = false;
+            }
+
+        } else if (src == mniGrabar) {
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(archivoDatos, true))) {
+                writer.write(txfNumeroTelefonico.getText());
+                writer.newLine();
+                grabado = true;
+                JOptionPane.showMessageDialog(this, "Número guardado.");
+            } catch (IOException ex) {
+                JOptionPane.showMessageDialog(this, "Error al guardar el número.");
+            }
+
+        } else if (src == mniLeer) {
+            try (BufferedReader reader = new BufferedReader(new FileReader(archivoDatos))) {
+                StringBuilder contenido = new StringBuilder();
+                String linea;
+                while ((linea = reader.readLine()) != null) {
+>>>>>>> f755ca6ccbc320d060f4bac14a95199eea595a99
                     contenido.append(linea).append("\n");
                 }
                 JOptionPane.showMessageDialog(this, contenido.toString(), "Números guardados",
@@ -148,6 +203,10 @@ public class Ejercicio17 extends JFrame implements ActionListener, MouseListener
             } catch (IOException ex) {
                 JOptionPane.showMessageDialog(this, "No se pudo leer el archivo.");
             }
+<<<<<<< HEAD
+=======
+
+>>>>>>> f755ca6ccbc320d060f4bac14a95199eea595a99
         } else if (src == mniSalir) {
             if (!txfNumeroTelefonico.getText().isEmpty() && !grabado) {
                 int respuesta = JOptionPane.showConfirmDialog(this,
@@ -179,17 +238,25 @@ public class Ejercicio17 extends JFrame implements ActionListener, MouseListener
     @Override
     public void mouseEntered(MouseEvent e) {
         JButton button = (JButton) e.getSource();
+<<<<<<< HEAD
         if (button.getForeground() != Color.BLUE) {
             button.setForeground(Color.ORANGE);
         }
+=======
+        button.setForeground(Color.ORANGE);
+>>>>>>> f755ca6ccbc320d060f4bac14a95199eea595a99
     }
 
     @Override
     public void mouseExited(MouseEvent e) {
         JButton button = (JButton) e.getSource();
+<<<<<<< HEAD
         if (button.getForeground() != Color.BLUE) {
             button.setForeground(Color.BLACK);
         }
+=======
+        button.setForeground(Color.PINK);
+>>>>>>> f755ca6ccbc320d060f4bac14a95199eea595a99
 
     }
 
