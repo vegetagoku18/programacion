@@ -34,7 +34,7 @@ public class Ejercicio19Ver extends JDialog {
                 dispose();
             } else {
                 while (sc.hasNext()) {
-                    txaRecords.append(sc.nextLine());
+                    txaRecords.append(sc.nextLine()+ "\n");
                 }
             }
         } catch (IOException e) {

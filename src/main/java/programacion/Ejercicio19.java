@@ -13,7 +13,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.Timer;
 
-public class Ejercicio19 extends JFrame implements ActionListener, ItemListener {
+public class Ejercicio19 extends JFrame implements ActionListener, ItemListener { // TODO revisar archivos
     JCheckBox[] chbNumeros = new JCheckBox[49];
     int x = 60;
     int y = 60;
@@ -85,20 +85,25 @@ public class Ejercicio19 extends JFrame implements ActionListener, ItemListener 
                 jCheckBox.setForeground(Color.BLACK);
             }
             for (int i = 0; i < numerosElegidos.length; i++) {
-                int valor = (int) (Math.random() * 49 + 1);
-                while (valor == numerosElegidos[0] || valor == numerosElegidos[1] || valor == numerosElegidos[2]
-                        || valor == numerosElegidos[3] || valor == numerosElegidos[4]) {
+                int valor;
+                // TODO bucle y completo
+                boolean repetido;
+                do {
                     valor = (int) (Math.random() * 49 + 1);
-                }
+                    repetido = false;
+                    for (int j = 0; j < i; j++) {
+                        if (numerosElegidos[j] == valor) {
+                            repetido = true;
+                            j = i;
+                        }
+                    }
+                } while (repetido);
                 numerosElegidos[i] = valor;
-                System.out.println(numerosElegidos[i]);
+                System.err.println(numerosElegidos[i]);
             }
-            chbNumeros[numerosElegidos[0] - 1].setForeground(Color.RED);
-            chbNumeros[numerosElegidos[1] - 1].setForeground(Color.RED);
-            chbNumeros[numerosElegidos[2] - 1].setForeground(Color.RED);
-            chbNumeros[numerosElegidos[3] - 1].setForeground(Color.RED);
-            chbNumeros[numerosElegidos[4] - 1].setForeground(Color.RED);
-            chbNumeros[numerosElegidos[5] - 1].setForeground(Color.RED);
+            for (int i = 0; i < numerosElegidos.length; i++) {
+                chbNumeros[numerosElegidos[i] - 1].setForeground(Color.RED);
+            }
 
             for (int i = 0; i < numerosElegidos.length; i++) {
                 if (chbNumeros[numerosElegidos[i] - 1].isSelected()) {
@@ -115,7 +120,6 @@ public class Ejercicio19 extends JFrame implements ActionListener, ItemListener 
             secundario.setVisible(true);
         }
         if (e.getSource() == btnVer) {
-            System.out.println("prueba");
             Ejercicio19Ver secundario = new Ejercicio19Ver(this);
             secundario.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             secundario.setSize(600, 600);
@@ -140,7 +144,6 @@ public class Ejercicio19 extends JFrame implements ActionListener, ItemListener 
                 esperando = true;
             }
         }
-
     }
 
     @Override

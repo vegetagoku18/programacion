@@ -3,6 +3,7 @@ package programacion;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -49,8 +50,11 @@ public class Ejercicio19Guardar extends JDialog implements ActionListener {
             String ruta = System.getProperty("user.home") + "\\records.txt";
             File archivo = new File(ruta);
             System.out.println(ruta);
-            try (PrintWriter pw = new PrintWriter(archivo)) {
-                archivo.createNewFile();
+            try (PrintWriter pw = new PrintWriter(new FileWriter(archivo, true))) {
+                if (!archivo.exists()) {
+                    System.out.println("Existe");
+                    archivo.createNewFile();
+                }
                 pw.print(txfNombre.getText()+": ");
                 for (Integer integer : numerosCorrectos) {
                     pw.print(integer+" ");
